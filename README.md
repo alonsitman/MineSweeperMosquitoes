@@ -1,2 +1,2 @@
 # MineSweeperMosquitoes
-My version of mine sweeper
+My version of Mine Sweeper
