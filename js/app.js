@@ -14,14 +14,16 @@ var gGame = {
     secsPassed: 0
 }
 
-const MOSQUITO_IMG = '<img src="img/mosquito.png">'
-
+const MOSQUITO_IMG = '<img src="img/mosquito2.png">'
+const REPELLENT_IMG = '<img src="img/repellent.png">'
 
 function onInit() {
     gGame.isOn = true
     gBoard = buildBoard()
     renderBoard(gBoard)
     
+    
+
     // for (let i = 0; i < gBoard.length; i++) {
     //     for (let j = 0; j < gBoard[0].length; j++) {
     //         renderCell({i: i, j: j}, setMosquitoesNegsCount(gBoard, i, j))
@@ -37,13 +39,17 @@ function buildBoard() {
 
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-			board[i][j] = {mosquitoesAroundCount: 0, isShown: false, isMosquito: false, isMarked: false}
+			board[i][j] = {mosquitoesAroundCount: 0,
+                            isShown: false,
+                            isMosquito: false,
+                            isMarked: false
+                        }
         }
     }
 
-    board[0][2].isMosquito = true
-    board[1][1].isMosquito = true
-    // randSpreadMosquitoes(board)
+    // board[0][2].isMosquito = true
+    // board[1][1].isMosquito = true
+    randSpreadMosquitoes(board)
     
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
@@ -86,10 +92,11 @@ function renderBoard(board) {
 
             if (currCell.isMosquito === true) cellClass += ' mosquito'
 
-            strHTML += '\t<td class="cell ' + cellClass + '">\n'
-            if (currCell.isMosquito === true) strHTML += MOSQUITO_IMG
-
-            strHTML += '\t</td>\n'
+            strHTML += '\t<td class="cell ' + cellClass +
+                        '" onclick="onCellClicked(this, ' + i + ', ' + j + ')" ' +
+                        'oncontextmenu="onCellMarked(this)">\n' +
+                        '\t</td>\n'
+                        
         }
 
         strHTML += '</tr>\n'
@@ -97,6 +104,7 @@ function renderBoard(board) {
 
     console.log('strHTML:\n', strHTML)
     elBoard.innerHTML = strHTML
+    elBoard.addEventListener("contextmenu", e => e.preventDefault())
 }
 
 function renderCell(location, value) {
@@ -108,11 +116,21 @@ function renderCell(location, value) {
 }
 
 function onCellClicked(elCell, i, j) {
+    if (elCell.classList.contains('mosquito')) {
+        renderCell({i: i, j: j}, MOSQUITO_IMG)
+        // console.log('Ouch! I hate mosquitoes!!!')
+    }
+    else {
+        elCell.innerHTML = setMosquitoesNegsCount(gBoard, i, j)
+    }
 
+    gBoard[i][j].isShown = true
 }
 
 function onCellMarked(elCell) {
+    elCell.innerHTML = REPELLENT_IMG
 
+    console.log(elCell)
 }
 
 function checkGameOver() {
@@ -139,7 +157,10 @@ function randSpreadMosquitoes(board) {
             }
         }
 
-        if (numMosquitoes !== gLevel.MOSQUITO) numMosquitoes = 0
+        if (numMosquitoes !== gLevel.MOSQUITO) {
+            numMosquitoes = 0
+            board[randI][randJ].isMosquito = false
+        }
     }
 }
 
