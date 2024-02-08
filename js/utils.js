@@ -34,12 +34,12 @@ function getClassName(location) {
 }
 
 // for these to work need css class .hide or different solution
-// function showElement(selector) {
-//     const element = document.querySelector(selector)
-//     element.classList.remove('hide')
-// }
+function showElement(selector) {
+    const element = document.querySelector(selector)
+    element.classList.remove('hide')
+}
 
-// function hideElement(selector) {
-//     const element = document.querySelector(selector)
-//     element.classList.add('hide')
-// }
+function hideElement(selector) {
+    const element = document.querySelector(selector)
+    element.classList.add('hide')
+}

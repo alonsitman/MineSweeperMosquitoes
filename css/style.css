@@ -1,6 +1,6 @@
 body {
     text-align: center;
-    background-color: rgba(137, 43, 226, 0.411);
+    background-color: rgba(206, 120, 120, 0.452);
 }
 
 table {
@@ -16,5 +16,12 @@ table {
 
 .cell img {
     width: 40px
-    
+}
+
+.expand {
+    background-color: rgba(128, 128, 128, 0.555);
+}
+
+.sting {
+    background-color: brown;
 }
