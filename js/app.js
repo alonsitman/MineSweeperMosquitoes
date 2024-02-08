@@ -2,10 +2,13 @@
 
 var gBoard
 
-var gLevel = {
-    SIZE: 4,
-    MOSQUITO: 2
-}
+var gLevels = [
+    { SIZE: 4, MOSQUITO: 2 },
+    { SIZE: 8, MOSQUITO: 14},
+    { SIZE: 12, MOSQUITO: 32}
+]
+
+var gLevel = gLevels[0]
 
 var gGame = {
     isOn: false,
@@ -22,14 +25,6 @@ function onInit() {
     resetMosqsCount()
     gBoard = buildBoard()
     renderBoard(gBoard)
-    
-    
-
-    // for (let i = 0; i < gBoard.length; i++) {
-    //     for (let j = 0; j < gBoard[0].length; j++) {
-    //         renderCell({i: i, j: j}, setMosquitoesNegsCount(gBoard, i, j))
-    //     }
-    // }
 }
 
 
@@ -62,20 +57,15 @@ function buildBoard() {
 
 function randPositionMosquitoes(board) {    
     var numMosquitoes = 0
-    while (numMosquitoes !== gLevel.MOSQUITO) {
+    while (numMosquitoes < gLevel.MOSQUITO) {
         for (let i = 0; i < gLevel.MOSQUITO; i++) {
             const randI = getRandomInt(0, board.length - 1)
             const randJ = getRandomInt(0, board[0].length - 1)
 
-            if (board[randI][randJ].isMosquito === false) {
+            if (board[randI][randJ].isMosquito === false && numMosquitoes < gLevel.MOSQUITO) {
                 board[randI][randJ].isMosquito = true
                 numMosquitoes++
             }
-        }
-        
-        if (numMosquitoes !== gLevel.MOSQUITO) {
-            numMosquitoes = 0
-            // board[randI][randJ].isMosquito = false
         }
     }
 }
@@ -136,13 +126,13 @@ function renderBoard(board) {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-function renderCell(location, value) {
-    const cellSelector = '.' + getClassName(location)
-    // console.log('cellSelector:', cellSelector)
-	const elCell = document.querySelector(cellSelector)
-	elCell.innerHTML = value
-    // console.log('elCell:', elCell)
-}
+// function renderCell(location, value) {
+//     const cellSelector = '.' + getClassName(location)
+//     // console.log('cellSelector:', cellSelector)
+// 	const elCell = document.querySelector(cellSelector)
+// 	elCell.innerHTML = value
+//     // console.log('elCell:', elCell)
+// }
 
 function onCellClicked(elCell, i, j) {
     const cell = gBoard[i][j]    
@@ -200,4 +190,13 @@ function expandShown(board, elCell, i, j) {
 function resetMosqsCount() {
     const elMosqsLeft = document.querySelector('[data-mosqs-left]')
     elMosqsLeft.innerHTML = gLevel.MOSQUITO
+}
+
+function setLevel(elBtn) {
+    if (elBtn.innerHTML === 'Beginner') gLevel = gLevels[0]
+    else if (elBtn.innerHTML === 'Medium')  gLevel = gLevels[1]
+    else if (elBtn.innerHTML === 'Expert')  gLevel = gLevels[2]
+    console.log(gLevel)
+    
+    onInit()
 }
