@@ -29,7 +29,7 @@ function getRandomColor() {
 }
 
 function getClassName(location) {
-	const cellClass = 'cell-' + location.i + '-' + location.j
+	const cellClass = '' + location.i + '-' + location.j
 	return cellClass
 }
 
