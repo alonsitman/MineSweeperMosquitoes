@@ -14,12 +14,13 @@ var gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0
+    secsPassed: 0,
+    livesLeft: 3
 }
 
 const MOSQUITO_IMG = '<img src="img/mosquito2.png">'
 const REPELLENT_IMG = '<img src="img/repellent.png">'
-
+const HEART_EMOJI = '💙'
 
 //////////////////////////////// Create & Populate Board ////////////////////////////////
 
@@ -84,8 +85,6 @@ function countNegMosqs(board, rowIdx, colIdx) {
 }
 
 function renderBoard(board) {
-    const elBoard = document.querySelector('.board')
-    
     var strHTML = ''
     for (let i = 0; i < board.length; i++) {
         strHTML += '<tr>\n'
@@ -108,8 +107,12 @@ function renderBoard(board) {
     }
 
     console.log('strHTML:\n', strHTML)
+    const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
     elBoard.addEventListener("contextmenu", e => e.preventDefault())
+
+    const elHearts = document.querySelector('[data-lives-left]')
+    elHearts.innerHTML = HEART_EMOJI + HEART_EMOJI +HEART_EMOJI
 }
 
 //////////////////////////////////// Event Handling ////////////////////////////////////
@@ -127,16 +130,20 @@ function onCellClicked(elCell, i, j) {
     
         if (cell.isMarked || cell.isShown) return
     
-        if (cell.mosquitoesAroundCount) {
-            elCell.innerHTML = cell.mosquitoesAroundCount
+        cell.isShown = true
+        gGame.shownCount++
+
+        if (elCell.classList.contains('mosquito')) {
+            sting(elCell)
         }
         else if (elCell.classList.contains('zero')){
             expandShown(elCell, i, j)
         }
-    
-        cell.isShown = true
-        gGame.shownCount++
-        checkGameOver(elCell)
+        else {
+            elCell.innerHTML = cell.mosquitoesAroundCount
+        }
+
+        checkGameOver()
     }
 }
 
@@ -157,39 +164,50 @@ function onCellMarked(elCell, i, j) {
         }
     
         displayMosqsLeft()
+        checkGameOver()
     }
 }
 
 //////////////////////////////// Further Logic & Display ////////////////////////////////
 
-function checkGameOver(elCell) {
-    var status = 'In play'
-    const numCells = gLevel.SIZE ** 2
+function checkGameOver() {
+    const numCells = gLevel.SIZE ** 2    
     
-    console.log('shown count:', gGame.shownCount)
-    console.log('marked count:', gGame.markedCount)
-
-    if (elCell.classList.contains('mosquito')) {
-        status = 'Lose'
-        elCell.innerHTML = MOSQUITO_IMG
-        elCell.classList.add('sting')
-
+    if (!gGame.livesLeft) gameOver('Lose')
+    else if (gGame.markedCount === gLevel.MOSQUITO) {
+        if (gGame.shownCount === numCells - gLevel.MOSQUITO) gameOver('Win')
+        else gameOver('Lose')
     }
-    else if (gGame.shownCount === numCells - gLevel.MOSQUITO && gGame.markedCount === gLevel.MOSQUITO) {
-        status = 'Win'
-    }
+}
 
-    gameOver(status)
+function sting(elCell) {
+    elCell.classList.add('sting')
+    elCell.innerHTML = MOSQUITO_IMG
+
+    gGame.livesLeft--
+    gGame.markedCount++
+    displayMosqsLeft()
+
+    const elHearts = document.querySelector('[data-lives-left]')
+    elHearts.innerHTML = ''
+    for (let j = 0; j < gGame.livesLeft; j++) {
+        elHearts.innerHTML += HEART_EMOJI
+    }
 }
 
 function gameOver(status) {
     if (status === 'Lose') {
-        gGame.isOn = false
+        const elMosquitoes = document.querySelectorAll('.mosquito')
+        for (let i = 0; i < elMosquitoes.length; i++) {
+            elMosquitoes[i].innerHTML = MOSQUITO_IMG
+        }
         console.log('Ouch! I hate mosquitoes!!!')
     }
     else if (status === 'Win') {
         console.log('You Win!')
     }
+
+    gGame.isOn = false
 }
 
 function expandShown(elCell, i, j) {
@@ -240,6 +258,7 @@ function restart() {
     gGame.isOn = true
     gGame.markedCount = 0
     gGame.shownCount = 0
+    gGame.livesLeft = 3
 
     onInit()
 }

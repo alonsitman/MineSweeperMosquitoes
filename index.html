@@ -11,9 +11,12 @@
 <body onload="onInit()" >
     
     <h1>DeBugger</h1>
-    <button onclick="setLevel(this)">Beginner</button>
-    <button onclick="setLevel(this)">Medium</button>
-    <button onclick="setLevel(this)">Expert</button>
+    <div>
+        <button onclick="setLevel(this)">Beginner</button>
+        <button onclick="setLevel(this)">Medium</button>
+        <button onclick="setLevel(this)">Expert</button>
+    </div>
+    <h3>Lives: <span data-lives-left></span></h3>
     <h3>Mosquitoes Left: <span data-mosqs-left></span></h3>
     
     <table>

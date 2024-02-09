@@ -3,8 +3,19 @@ body {
     background-color: rgba(206, 120, 120, 0.452);
 }
 
+button {
+    margin-bottom: 20px;
+}
+
+h3 {
+    display: inline;
+    margin-inline: 10px;
+    
+}
+
 table {
     margin-inline: auto;
+    margin-top: 20px;
 }
 
 .cell {
