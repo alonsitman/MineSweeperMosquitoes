@@ -9,16 +9,21 @@
 </head>
 
 <body onload="onInit()" >
-    
     <h1>DeBugger</h1>
-    <div>
-        <button onclick="setLevel(this)">Beginner</button>
-        <button onclick="setLevel(this)">Medium</button>
-        <button onclick="setLevel(this)">Expert</button>
+
+    <div class="set-level">
+        <button onclick="onSetLevel(this)">Beginner</button>
+        <button onclick="onSetLevel(this)">Medium</button>
+        <button onclick="onSetLevel(this)">Expert</button>
     </div>
-    <h3>Lives: <span data-lives-left></span></h3>
-    <h3>Mosquitoes Left: <span data-mosqs-left></span></h3>
-    
+
+    <div class="state">
+        <h3>Lives: <span data-lives-left></span></h3>
+        <button onclick="onRestart(this)">&#129312</button>
+        <h3>Mosquitoes Left: <span data-mosqs-left></span></h3>
+        <span class="seconds-counter">0</span>
+    </div>
+
     <table>
         <tbody class="board"></tbody>
     </table>

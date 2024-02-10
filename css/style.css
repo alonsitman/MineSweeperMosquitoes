@@ -3,14 +3,29 @@ body {
     background-color: rgba(206, 120, 120, 0.452);
 }
 
-button {
+.set-level button {
     margin-bottom: 20px;
+}
+
+.state button {
+    background-color: rgba(206, 120, 120, 0.452);
+    border: none;
+    /* height: 30px; */
+    /* width: 40px; */
+    font-size: 25px;
+    
 }
 
 h3 {
     display: inline;
     margin-inline: 10px;
     
+}
+
+.seconds-counter {
+    background-color: black;
+    color: aliceblue;
+    padding-inline: 10px;
 }
 
 table {

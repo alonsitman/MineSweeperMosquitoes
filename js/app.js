@@ -20,6 +20,9 @@ var gGame = {
 
 const MOSQUITO_IMG = '<img src="img/mosquito2.png">'
 const REPELLENT_IMG = '<img src="img/repellent.png">'
+const COWBOY_EMOJI = '&#129312'
+const SUNGLASSES_EMOJI = '&#128526'
+const SKULL_EMOJI = '&#128128'
 const HEART_EMOJI = '💙'
 
 //////////////////////////////// Create & Populate Board ////////////////////////////////
@@ -125,6 +128,10 @@ function onInit() {
 }
 
 function onCellClicked(elCell, i, j) {
+    if(gGame.isOn && !gGame.secsPassed) {
+        startGame()
+    }
+    
     if(gGame.isOn) {
         const cell = gBoard[i][j]    
     
@@ -148,6 +155,10 @@ function onCellClicked(elCell, i, j) {
 }
 
 function onCellMarked(elCell, i, j) {
+    if(!gGame.secsPassed) {
+        startGame()
+    }
+    
     if (gGame.isOn) {
         const cell = gBoard[i][j] 
     
@@ -168,6 +179,19 @@ function onCellMarked(elCell, i, j) {
     }
 }
 
+function onRestart(elBtn) {
+    restart()
+    elBtn.innerHTML = COWBOY_EMOJI
+}
+
+function onSetLevel(elBtn) {
+    if (elBtn.innerHTML === 'Beginner') gLevel = gLevels[0]
+    else if (elBtn.innerHTML === 'Medium')  gLevel = gLevels[1]
+    else if (elBtn.innerHTML === 'Expert')  gLevel = gLevels[2]
+    
+    restart()
+}
+
 //////////////////////////////// Further Logic & Display ////////////////////////////////
 
 function checkGameOver() {
@@ -178,6 +202,25 @@ function checkGameOver() {
         if (gGame.shownCount === numCells - gLevel.MOSQUITO) gameOver('Win')
         else gameOver('Lose')
     }
+}
+
+function gameOver(status) {
+    var elSmileyBtn = document.querySelector('.state button')
+    
+    if (status === 'Lose') {
+        const elMosquitoes = document.querySelectorAll('.mosquito')
+        for (let i = 0; i < elMosquitoes.length; i++) {
+            elMosquitoes[i].innerHTML = MOSQUITO_IMG
+        }
+        elSmileyBtn.innerHTML = SKULL_EMOJI
+        console.log('Ouch! I hate mosquitoes!!!')
+    }
+    else if (status === 'Win') {
+        elSmileyBtn.innerHTML = SUNGLASSES_EMOJI
+        console.log('You Win!')
+    }
+
+    gGame.isOn = false
 }
 
 function sting(elCell) {
@@ -195,21 +238,6 @@ function sting(elCell) {
     }
 }
 
-function gameOver(status) {
-    if (status === 'Lose') {
-        const elMosquitoes = document.querySelectorAll('.mosquito')
-        for (let i = 0; i < elMosquitoes.length; i++) {
-            elMosquitoes[i].innerHTML = MOSQUITO_IMG
-        }
-        console.log('Ouch! I hate mosquitoes!!!')
-    }
-    else if (status === 'Win') {
-        console.log('You Win!')
-    }
-
-    gGame.isOn = false
-}
-
 function expandShown(elCell, i, j) {
     const rowIdx = i
     const colIdx = j
@@ -223,14 +251,15 @@ function expandShown(elCell, i, j) {
             if (y < 0 || y >= gBoard[0].length) continue
             
             const currCell = gBoard[x][y]
-            if(!currCell.isShown){
+            if(!currCell.isShown && !currCell.isMarked){
                 currCell.isShown = true
                 gGame.shownCount++
     
                 const cellSelector = '.cell-' + getClassName({i: x, j: y})
                 var elCurrCell = document.querySelector(cellSelector)
-                elCurrCell.classList.add('expand')
-                if (!elCurrCell.classList.contains('zero')) elCurrCell.innerHTML = currCell.mosquitoesAroundCount
+                if (!elCurrCell.classList.contains('mosquito')) elCurrCell.classList.add('expand')
+                if (elCurrCell.classList.contains('number')) elCurrCell.innerHTML = currCell.mosquitoesAroundCount
+                else if (elCurrCell.classList.contains('zero')) expandShown(elCurrCell, x, y)
             }
         }
     }
@@ -246,19 +275,41 @@ function displayMosqsLeft() {
     elMosqsLeft.innerHTML = gLevel.MOSQUITO - gGame.markedCount
 }
 
-function setLevel(elBtn) {
-    if (elBtn.innerHTML === 'Beginner') gLevel = gLevels[0]
-    else if (elBtn.innerHTML === 'Medium')  gLevel = gLevels[1]
-    else if (elBtn.innerHTML === 'Expert')  gLevel = gLevels[2]
-    
-    restart()
-}
-
 function restart() {
+    var elCounter = document.querySelector('.seconds-counter')
+    elCounter.innerHTML = 0
+    
     gGame.isOn = true
     gGame.markedCount = 0
     gGame.shownCount = 0
     gGame.livesLeft = 3
+    gGame.secsPassed = 0
 
     onInit()
+}
+
+function startGame() {
+    gGame.isOn = true
+    setTimeout(startTimer, 1000)
+    countSeconds()
+}
+
+function startTimer() {
+    gGame.secsPassed = 1
+}
+
+function countSeconds() { 
+    var elCounter = document.querySelector('.seconds-counter')
+
+    function incrementSeconds() {
+        if (gGame.isOn && gGame.secsPassed) {
+            elCounter.innerText = gGame.secsPassed
+            gGame.secsPassed++
+        }
+        else {
+            clearInterval(cancel)
+        }
+    }
+
+    var cancel = setInterval(incrementSeconds, 1000)
 }

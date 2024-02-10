@@ -43,3 +43,6 @@ function hideElement(selector) {
     const element = document.querySelector(selector)
     element.classList.add('hide')
 }
+///////////////////////////////////////////////////////////////
+
+
